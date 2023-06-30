@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}
+Course list
+{% endblock %}
+{% block style %}
+    {% include "style.html" %}
+{% endblock %}
+<div id="main">
+    {% block menu %}
+        {% include "menu.html" %}
+    {% endblock %}
+    {% block body %}
+    <div id="content_header"></div>
+    <div id="site_content">
+        {% block sidebar %}
+            {% include "sidebar.html" %}
+        {% endblock %}
+        <div id="content">
+            <a href="create_course?id={{id}}">Create new course</a>
+        <br>
+        <h1>Course list for category "{{name}}"</h1>
+        {% for item in objects_list %}
+        <li>
+            {{item.name}} <span><a href="copy_course?name={{item.name}}">Copy</a></span>
+        </li>
+        {% endfor %}
+        </div>
+    </div>
+    {% endblock %}
+    {% block footer %}
+        {% include "footer.html" %}
+    {% endblock %}
+</div>

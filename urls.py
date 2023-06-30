@@ -1,5 +1,5 @@
 from datetime import datetime
-from views import Index, Page, Contact
+from views import Index, Course, Category, Contact, CreateCourse, CreateCategory, CopyCourse
 
 
 def add_date(request):
@@ -11,7 +11,11 @@ fronts = [add_date]
 
 routes = {
     '/': Index(),
-    '/page/': Page(),
+    '/course/': Course(),
+    '/category/': Category(),
     '/contact/': Contact(),
+    '/create_course/': CreateCourse(),
+    '/create_category/': CreateCategory(),
+    '/copy_course/': CopyCourse(),
     '/index/': Index(),
 }
