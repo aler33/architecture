@@ -9,13 +9,11 @@ def add_date(request):
 fronts = [add_date]
 
 
-routes = {
-    '/': Index(),
-    '/course/': Course(),
-    '/category/': Category(),
-    '/contact/': Contact(),
-    '/create_course/': CreateCourse(),
-    '/create_category/': CreateCategory(),
-    '/copy_course/': CopyCourse(),
-    '/index/': Index(),
-}
+# routes = {
+#     '/course/': Course(),
+#     '/category/': Category(),
+#     '/contact/': Contact(),
+#     '/create_course/': CreateCourse(),
+#     '/create_category/': CreateCategory(),
+#     '/copy_course/': CopyCourse(),
+# }

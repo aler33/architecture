@@ -1,21 +1,30 @@
 from alex_framework.templator import render
 from patterns.create import Engine, Logger
+from patterns.strucktur import AppRoute, Debug
 
 site = Engine()
 logger = Logger('main')
 
+routes = {}
 
+
+@AppRoute(routes=routes, url=['/index/', '/'])
 class Index:
+    @Debug(name='Index')
     def __call__(self, request):
         return '200 OK', render('index.html', date=request.get('date', None))
 
 
+@AppRoute(routes=routes, url='/contact/')
 class Contact:
+    @Debug(name='Contact')
     def __call__(self, request):
         return '200 OK', render('contact.html', date=request.get('date', None))
 
 
+@AppRoute(routes=routes, url='/course/')
 class Course:
+    @Debug(name='Course')
     def __call__(self, request):
         logger.log('Course list')
         try:
@@ -28,9 +37,11 @@ class Course:
             return '204 No Content', 'No courses have been added yet'
 
 
+@AppRoute(routes=routes, url='/create_course/')
 class CreateCourse:
     category_id = -1
 
+    @Debug(name='CreateCourse')
     def __call__(self, request):
         if request['method'] == 'POST':
             data = request['data']
@@ -58,14 +69,18 @@ class CreateCourse:
                 return '204 No Content', 'No categories have been added yet'
 
 
+@AppRoute(routes=routes, url='/category/')
 class Category:
+    @Debug(name='Category')
     def __call__(self, request):
         logger.log('Category list')
         return '200 OK', render('category_list.html',
                                 objects_list=site.categories)
 
 
+@AppRoute(routes=routes, url='/create_category/')
 class CreateCategory:
+    @Debug(name='CreateCategory')
     def __call__(self, request):
 
         if request['method'] == 'POST':
@@ -85,7 +100,9 @@ class CreateCategory:
                                     categories=categories)
 
 
+@AppRoute(routes=routes, url='/copy_course/')
 class CopyCourse:
+    @Debug(name='CopyCourse')
     def __call__(self, request):
         request_params = request['Request_params']
 
@@ -104,3 +121,8 @@ class CopyCourse:
                                     id=new_course.category.id)
         except KeyError:
             return '204 No Content', 'No courses have been added yet'
+
+
+# a = Index()
+# print(f'***** {a}')
+# routes['/'] = a
