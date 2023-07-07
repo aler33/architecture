@@ -1,9 +1,12 @@
 from alex_framework.templator import render
 from patterns.create import Engine, Logger
 from patterns.strucktur import AppRoute, Debug
+from patterns.behavioral import ListView, CreateView, SMSNotifier, EmailNotifier, BaseSerializer
 
 site = Engine()
 logger = Logger('main')
+sms_notifier = SMSNotifier()
+email_notifier = EmailNotifier()
 
 routes = {}
 
@@ -51,6 +54,8 @@ class CreateCourse:
             if self.category_id != -1:
                 category = site.find_category_by_id(int(self.category_id))
                 course = site.create_course('beginner', name, category)
+                course.observers.append(email_notifier)
+                course.observers.append(sms_notifier)
                 site.courses.append(course)
 
             return '200 OK', render('course_list.html',
@@ -123,6 +128,45 @@ class CopyCourse:
             return '204 No Content', 'No courses have been added yet'
 
 
-# a = Index()
-# print(f'***** {a}')
-# routes['/'] = a
+@AppRoute(routes=routes, url='/students/')
+class StudentsListView(ListView):
+    queryset = site.students
+    template_name = 'student_list.html'
+
+
+@AppRoute(routes=routes, url='/create_student/')
+class StudentCreateView(CreateView):
+    template_name = 'create_student.html'
+
+    def create_obj(self, data):
+        name_raw = data['name']
+        name = site.decode_value(name_raw)
+        new_obj = site.create_user('student', name)
+        site.students.append(new_obj)
+
+
+@AppRoute(routes=routes, url='/add_student/')
+class AddStudentCourseCreateView(CreateView):
+    template_name = 'add_student.html'
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['courses'] = site.courses
+        context['students'] = site.students
+        return context
+
+    def create_obj(self, data):
+        course_name_raw = data['course_name']
+        course_name = site.decode_value(course_name_raw)
+        course = site.get_course(course_name)
+        student_name_raw = data['student_name']
+        student_name = site.decode_value(student_name_raw)
+        student = site.get_student(student_name)
+        course.add_student(student)
+
+
+@AppRoute(routes=routes, url='/api/')
+class CourseApi:
+    @Debug(name='CourseApi')
+    def __call__(self, request, *args, **kwargs):
+        return '200 OK', BaseSerializer(site.courses).save()

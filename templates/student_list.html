@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}
+Course list
+{% endblock %}
+{% block style %}
+    {% include "style.html" %}
+{% endblock %}
+<div id="main">
+    {% block menu %}
+        {% include "menu.html" %}
+    {% endblock %}
+    {% block body %}
+    <div id="content_header"></div>
+    <div id="site_content">
+        {% block sidebar %}
+            {% include "sidebar.html" %}
+        {% endblock %}
+       <div>
+		<li>
+			<a href="create_student">Create student</a>
+		</li>
+		<li>
+			<a href="add_student">Add student on course</a>
+		</li>
+	</div>
+    <h1>Students List</h1>
+    <div>
+        {% for item in objects_list %}
+        <li>
+            {{item.name}}
+            {% for course in item.courses %}
+                {{course.name}}
+            {% endfor %}
+        </li>
+        {% endfor %}
+    </div>
+    </div>
+    {% endblock %}
+    {% block footer %}
+        {% include "footer.html" %}
+    {% endblock %}
+</div>

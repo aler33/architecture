@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}
+Course list
+{% endblock %}
+{% block style %}
+    {% include "style.html" %}
+{% endblock %}
+<div id="main">
+    {% block menu %}
+        {% include "menu.html" %}
+    {% endblock %}
+    {% block body %}
+    <div id="content_header"></div>
+    <div id="site_content">
+        {% block sidebar %}
+            {% include "sidebar.html" %}
+        {% endblock %}
+       <div>
+		<li>
+			<a href="students">Student list</a>
+		</li>
+		<li>
+			<a href="create_student">Create student</a>
+		</li>
+	</div>
+    <h1>Add student on course</h1>
+    <form method="post">
+        <select size="3" name="course_name">
+            {% for item in courses %}
+            <option value="{{item.name}}">{{item.name}}</option>
+            {% endfor %}
+        </select>
+        <select size="3" name="student_name">
+            {% for item in students %}
+            <option value="{{item.name}}">{{item.name}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Save</button>
+    </form>
+    </div>
+    {% endblock %}
+    {% block footer %}
+        {% include "footer.html" %}
+    {% endblock %}
+</div>
