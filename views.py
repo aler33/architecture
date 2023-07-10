@@ -1,12 +1,15 @@
 from alex_framework.templator import render
-from patterns.create import Engine, Logger
+from patterns.create import Engine, Logger, MapperRegistry
 from patterns.strucktur import AppRoute, Debug
 from patterns.behavioral import ListView, CreateView, SMSNotifier, EmailNotifier, BaseSerializer
+from patterns.archsystem_unit_of_work import UnitOfWork
 
 site = Engine()
 logger = Logger('main')
 sms_notifier = SMSNotifier()
 email_notifier = EmailNotifier()
+UnitOfWork.new_current()
+UnitOfWork.get_current().set_mapper_registry(MapperRegistry)
 
 routes = {}
 
@@ -130,8 +133,12 @@ class CopyCourse:
 
 @AppRoute(routes=routes, url='/students/')
 class StudentsListView(ListView):
-    queryset = site.students
+    # queryset = site.students
     template_name = 'student_list.html'
+
+    def get_queryset(self):
+        mapper = MapperRegistry.get_current_mapper('student')
+        return mapper.all()
 
 
 @AppRoute(routes=routes, url='/create_student/')
@@ -143,6 +150,8 @@ class StudentCreateView(CreateView):
         name = site.decode_value(name_raw)
         new_obj = site.create_user('student', name)
         site.students.append(new_obj)
+        new_obj.mark_new()
+        UnitOfWork.get_current().commit()
 
 
 @AppRoute(routes=routes, url='/add_student/')
@@ -152,6 +161,8 @@ class AddStudentCourseCreateView(CreateView):
     def get_context_data(self):
         context = super().get_context_data()
         context['courses'] = site.courses
+        # mapper = MapperRegistry.get_current_mapper('student')
+        # context['students'] = mapper.all()
         context['students'] = site.students
         return context
 
